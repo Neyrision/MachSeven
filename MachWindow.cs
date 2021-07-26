@@ -9,7 +9,7 @@ namespace MachSeven
     public class MachWindow
     {
         public Sdl2Window window;
-        public WindowCreateInfo windowCI= new WindowCreateInfo()
+        public WindowCreateInfo windowCI = new WindowCreateInfo()
         {
             X = 100,
             Y = 100,

@@ -1,9 +1,7 @@
 ﻿
-using System;
 using System.Numerics;
-using System.Text;
+
 using Veldrid;
-using Veldrid.Sdl2;
 using Veldrid.SPIRV;
 using Veldrid.StartupUtilities;
 
@@ -57,6 +55,10 @@ namespace MachSeven
 
         public static void CreateResources()
         {
+            var _texData = LoadEmbeddedAsset<ProcessedTexture>("spnza_bricks_a_diff.binary");
+            var _vertices = GetCubeVertices();
+            var _indices = GetCubeIndices();
+
             ResourceFactory factory = _graphicsDevice.ResourceFactory;
             _vertexBuffer = factory.CreateBuffer(new BufferDescription(4 * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer = factory.CreateBuffer(new BufferDescription(4 * sizeof(ushort), BufferUsage.IndexBuffer));
