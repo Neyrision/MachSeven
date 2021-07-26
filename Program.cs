@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Numerics;
 using System.Text;
 using Veldrid;
@@ -30,8 +31,10 @@ namespace MachSeven
                 WindowTitle = "MachSeven"
             };
 
+            
             GraphicsDeviceOptions options = new GraphicsDeviceOptions
             {
+                
                 PreferStandardClipSpaceYDirection = true,
                 PreferDepthRangeZeroToOne = true
             };
@@ -73,7 +76,8 @@ namespace MachSeven
 
             MachPipelineDescription pipelineDescription = new MachPipelineDescription(_graphicsDevice, _shaders);
             _pipeline = factory.CreateGraphicsPipeline(pipelineDescription.graphicsPipelineDesc);
-
+            var test = factory.CreateTexture(new TextureDescription(26, 26, 1, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging, TextureType.Texture2D, _graphicsDevice.GetSampleCountLimit(PixelFormat.R8_G8_B8_A8_UNorm, false)));
+            
             _commandList = factory.CreateCommandList();
         }
 
