@@ -7,33 +7,32 @@ namespace MachSeven
 {
     class MachPipelineDescription
     {
-        public GraphicsPipelineDescription graphicsPipelineDesc;
+        public Pipeline _pipeline;
+        public ResourceSet _projViewSet;
+        public ResourceSet _worldTextureSet;
 
-        public MachPipelineDescription(GraphicsDevice _graphicsDevice ,Shader[] _shaders)
+        public MachPipelineDescription(GraphicsDevice _graphicsDevice , MachShaderDescription _shaderDesc, ResourceFactory factory)
         {
-            VertexLayoutDescription vertexLayout = new VertexLayoutDescription(
-                new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4));
+            _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
+                BlendStateDescription.SingleOverrideBlend,
+                DepthStencilStateDescription.DepthOnlyLessEqual,
+                new RasterizerStateDescription(
+                    cullMode: FaceCullMode.None,
+                    fillMode: PolygonFillMode.Wireframe,
+                    frontFace: FrontFace.Clockwise,
+                    depthClipEnabled: true,
+                    scissorTestEnabled: false
+                    ),
 
-            graphicsPipelineDesc = new GraphicsPipelineDescription();
-            graphicsPipelineDesc.BlendState = BlendStateDescription.SingleOverrideBlend;
-            graphicsPipelineDesc.DepthStencilState = new DepthStencilStateDescription(
-                depthTestEnabled: true,
-                depthWriteEnabled: true,
-                comparisonKind: ComparisonKind.LessEqual);
-            graphicsPipelineDesc.RasterizerState = new RasterizerStateDescription(
-                cullMode: FaceCullMode.Back,
-                fillMode: PolygonFillMode.Solid,
-                frontFace: FrontFace.Clockwise,
-                depthClipEnabled: true,
-                scissorTestEnabled: false);
-            graphicsPipelineDesc.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
-            graphicsPipelineDesc.ResourceLayouts = System.Array.Empty<ResourceLayout>();
-            graphicsPipelineDesc.ShaderSet = new ShaderSetDescription(
-                vertexLayouts: new VertexLayoutDescription[] { vertexLayout },
-                shaders: _shaders);
-            graphicsPipelineDesc.Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription;
+                PrimitiveTopology.TriangleList,
+                _shaderDesc.shaderSet,
+                new[] { _shaderDesc.projViewLayout },
+                _graphicsDevice.MainSwapchain.Framebuffer.OutputDescription
+               
+            ));;
+
             
+
         }
     }
 }

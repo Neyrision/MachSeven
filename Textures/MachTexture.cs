@@ -1,5 +1,4 @@
-﻿using AssetPrimitives;
-using SampleBase;
+﻿
 using System.Numerics;
 using System.Text;
 using Veldrid;
