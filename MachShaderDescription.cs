@@ -12,10 +12,11 @@ namespace MachSeven
         private string VertexCode;
         private string FragmentCode;
         public ShaderSetDescription shaderSet;
-        public ResourceLayout projViewLayout;
-        public ResourceLayout worldTextureLayout;
+        public ResourceLayout worldLayout;
+        public ResourceSet worldSet;
 
-        public MachShaderDescription(ResourceFactory factory)
+
+        public MachShaderDescription(ResourceFactory factory, DeviceBuffer _worldBuffer)
         {
             VertexCode = File.ReadAllText(@"Shaders/BaseVertexShader.vert");
             FragmentCode = File.ReadAllText(@"Shaders/BaseFragmentShader.frag");
@@ -31,6 +32,16 @@ namespace MachSeven
                     new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main"),
                     new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(FragmentCode), "main")));
 
+            worldLayout = factory.CreateResourceLayout(
+                new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription("WorldBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)
+                    )
+                );
+
+            worldSet = factory.CreateResourceSet(new ResourceSetDescription(
+                worldLayout,
+                _worldBuffer
+                ));
         }
     }
 }

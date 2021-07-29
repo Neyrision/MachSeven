@@ -8,8 +8,7 @@ namespace MachSeven
     class MachPipelineDescription
     {
         public Pipeline _pipeline;
-        public ResourceSet _projViewSet;
-        public ResourceSet _worldTextureSet;
+      
 
         public MachPipelineDescription(GraphicsDevice _graphicsDevice , MachShaderDescription _shaderDesc, ResourceFactory factory)
         {
@@ -26,7 +25,7 @@ namespace MachSeven
 
                 PrimitiveTopology.TriangleList,
                 _shaderDesc.shaderSet,
-                new[] { _shaderDesc.projViewLayout },
+                new[] { _shaderDesc.worldLayout },
                 _graphicsDevice.MainSwapchain.Framebuffer.OutputDescription
                
             ));;
