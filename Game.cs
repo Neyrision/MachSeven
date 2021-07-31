@@ -16,24 +16,31 @@ namespace MachSeven
         private CommandList _cl;
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
-        private DeviceBuffer _worldBuffer;
+        private DeviceBuffer _modelBuffer;
+        private DeviceBuffer _viewBuffer;
+        private DeviceBuffer _projectionBuffer;
         private VertexPosition[] _vertices;
         private ushort[] _indices;
         private MachShaderDescription shaderDescription;
         private MachPipelineDescription pipelineDescription;
         private MachWindow machWindow;
+        private MachCamera machCamera;
         private float tick;
 
         public Game()
         {
             machWindow = new MachWindow();
 
-            GraphicsDeviceOptions options = new GraphicsDeviceOptions
-            {
-                PreferStandardClipSpaceYDirection = true,
-                PreferDepthRangeZeroToOne = true
-            };
+            GraphicsDeviceOptions options = new GraphicsDeviceOptions(
+                debug: false,
+                swapchainDepthFormat: PixelFormat.R16_UNorm,
+                syncToVerticalBlank: false,
+                resourceBindingModel: ResourceBindingModel.Improved,
+                preferDepthRangeZeroToOne: true,
+                preferStandardClipSpaceYDirection: false);
+
             _graphicsDevice = VeldridStartup.CreateGraphicsDevice(machWindow.window, options);
+            machCamera = new MachCamera(machWindow);
             _indices = Cube.GetCubeIndices();
             _vertices = Cube.GetCubeVertices();
 
@@ -54,16 +61,17 @@ namespace MachSeven
             ResourceFactory factory = _graphicsDevice.ResourceFactory;
 
 
-            _worldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+            _modelBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+            _viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+            _projectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             _vertexBuffer = factory.CreateBuffer(new BufferDescription((uint) _vertices.Length * VertexPosition.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer = factory.CreateBuffer(new BufferDescription((uint) _indices.Length * sizeof(ushort), BufferUsage.IndexBuffer));
-
 
 
             _graphicsDevice.UpdateBuffer(_vertexBuffer, 0, _vertices);
             _graphicsDevice.UpdateBuffer(_indexBuffer, 0, _indices);
 
-            shaderDescription = new MachShaderDescription(factory, _worldBuffer);
+            shaderDescription = new MachShaderDescription(factory, _modelBuffer, _viewBuffer, _projectionBuffer);
 
             pipelineDescription = new MachPipelineDescription(_graphicsDevice, shaderDescription, factory);
           
@@ -78,16 +86,31 @@ namespace MachSeven
             tick += 0.0001F;
             _cl.Begin();
 
-            Matrix4x4 rotation = Matrix4x4.CreateRotationX(tick) * Matrix4x4.CreateRotationY(tick);
 
-            _cl.UpdateBuffer(_worldBuffer, 0, ref rotation);
+            Matrix4x4 modelMatrix = 
+                Matrix4x4.CreateTranslation(0, 0, 0)
+                * Matrix4x4.CreateRotationX(0.0f)
+                * Matrix4x4.CreateRotationY(0.0f)
+                * Matrix4x4.CreateScale(1.0f);
+
+            
+            Matrix4x4 lookAtMatrix = Matrix4x4.CreateLookAt(machCamera._position,  machCamera._position - machCamera._direction, machCamera._cameraUp);
+
+            //Matrix4x4 perspectiveMatrix = Matrix4x4.CreatePerspective(machCamera._width, machCamera._height, machCamera._near, machCamera._far);
+
+
+            _cl.UpdateBuffer(_modelBuffer, 0, ref modelMatrix);
+            _cl.UpdateBuffer(_viewBuffer, 0, ref lookAtMatrix);
+           // _cl.UpdateBuffer(_projectionBuffer, 0, ref perspectiveMatrix);
+            
             _cl.SetFramebuffer(_graphicsDevice.MainSwapchain.Framebuffer);
             
             _cl.ClearColorTarget(0, RgbaFloat.Black);
-           // _cl.ClearDepthStencil(0F);
+            _cl.ClearDepthStencil(1f);
             
             _cl.SetPipeline(pipelineDescription._pipeline);
-            _cl.SetGraphicsResourceSet(0, shaderDescription.worldSet);
+            _cl.SetGraphicsResourceSet(0, shaderDescription.modelSet);
+            _cl.SetGraphicsResourceSet(1, shaderDescription.vertexSet);
             _cl.SetVertexBuffer(0, _vertexBuffer);
             _cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
             

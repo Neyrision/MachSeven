@@ -7,30 +7,46 @@ namespace MachSeven
 {
     class MachCamera
     {
-        private float _fov;
-        private float _near;
-        private float _far;
+        public float _fov;
+        public float _near;
+        public float _far;
+        public int _width;
+        public int _height;
 
-        private Vector3 _relation;
-        private Vector3 _position;
-        private Vector3 _target = new Vector3(0,0,0);
-        private float _up;
-        private float _right;
+        public Vector3 _direction;
+        public Vector3 _position;
+        public Vector3 _target = new Vector3(0,0,0);
+        public Vector3 _cameraUp;
+        public Vector3 _cameraRight;
 
         private Matrix4x4 _viewMatrix;
         private Matrix4x4 _projectionMatrix;
 
-        private int windowHeight;
-        private int windowWidth;
+
 
 
         public MachCamera(MachWindow mWindow)
         {
-            _position = new Vector3(0, 0, 3);
-            _relation = _target - _position;
+            _position = new Vector3(0f, 0f, 10f);
+            _direction = Vector3.Normalize(_position - _target);
 
-            windowHeight = mWindow.window.Height;
-            windowWidth = mWindow.window.Width;
+            _near = 0.1F;
+            _far = 100F;
+
+            _height = mWindow.window.Height;
+            _width = mWindow.window.Width;
+
+            var up = new Vector3(0,1,0);
+            _cameraRight = Vector3.Cross(up, _direction);
+            _cameraUp = Vector3.Cross(_direction, _cameraRight);
+
+        }
+
+        public static Matrix4x4 ScalingMatrix(Vector3 vector)
+        {
+            Matrix4x4 matrix;
+            return matrix = Matrix4x4.CreateScale(vector);
+
         }
     }
 }

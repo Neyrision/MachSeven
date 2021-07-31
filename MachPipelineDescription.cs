@@ -14,21 +14,23 @@ namespace MachSeven
         {
             _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
                 BlendStateDescription.SingleOverrideBlend,
-                DepthStencilStateDescription.DepthOnlyLessEqual,
+                new DepthStencilStateDescription(
+                    depthTestEnabled: true,
+                    depthWriteEnabled: true,
+                    comparisonKind: ComparisonKind.Always
+                    ),
                 new RasterizerStateDescription(
-                    cullMode: FaceCullMode.None,
-                    fillMode: PolygonFillMode.Wireframe,
+                    cullMode: FaceCullMode.Back,
+                    fillMode: PolygonFillMode.Solid,
                     frontFace: FrontFace.Clockwise,
-                    depthClipEnabled: true,
+                    depthClipEnabled: false,
                     scissorTestEnabled: false
                     ),
 
                 PrimitiveTopology.TriangleList,
                 _shaderDesc.shaderSet,
-                new[] { _shaderDesc.worldLayout },
-                _graphicsDevice.MainSwapchain.Framebuffer.OutputDescription
-               
-            ));;
+                new[] { _shaderDesc.modelLayout, _shaderDesc.vertexLayout },
+                _graphicsDevice.MainSwapchain.Framebuffer.OutputDescription));;
 
             
 

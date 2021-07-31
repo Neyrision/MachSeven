@@ -12,11 +12,13 @@ namespace MachSeven
         private string VertexCode;
         private string FragmentCode;
         public ShaderSetDescription shaderSet;
-        public ResourceLayout worldLayout;
-        public ResourceSet worldSet;
+        public ResourceLayout modelLayout;
+        public ResourceLayout vertexLayout;
+        public ResourceSet modelSet;
+        public ResourceSet vertexSet;
 
 
-        public MachShaderDescription(ResourceFactory factory, DeviceBuffer _worldBuffer)
+        public MachShaderDescription(ResourceFactory factory, DeviceBuffer _modelBuffer, DeviceBuffer _viewBuffer, DeviceBuffer _projectionBuffer)
         {
             VertexCode = File.ReadAllText(@"Shaders/BaseVertexShader.vert");
             FragmentCode = File.ReadAllText(@"Shaders/BaseFragmentShader.frag");
@@ -32,16 +34,27 @@ namespace MachSeven
                     new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main"),
                     new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(FragmentCode), "main")));
 
-            worldLayout = factory.CreateResourceLayout(
+            modelLayout = factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
-                        new ResourceLayoutElementDescription("WorldBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)
-                    )
-                );
+                        new ResourceLayoutElementDescription("ModelBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
 
-            worldSet = factory.CreateResourceSet(new ResourceSetDescription(
-                worldLayout,
-                _worldBuffer
-                ));
+            vertexLayout = factory.CreateResourceLayout(
+                new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription("ViewBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)
+                        //new ResourceLayoutElementDescription("ProjectionBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)
+                        ));
+
+            modelSet = factory.CreateResourceSet(
+                new ResourceSetDescription(
+                    modelLayout,
+                    _modelBuffer));
+
+            vertexSet = factory.CreateResourceSet(
+                new ResourceSetDescription(
+                    vertexLayout,
+                    _viewBuffer
+                    //_projectionBuffer
+                    ));
         }
     }
 }

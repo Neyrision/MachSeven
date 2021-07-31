@@ -14,7 +14,7 @@ namespace MachSeven.Textures
         public Texture _texture;
         public TextureView _textureView;
         public DeviceBuffer _viewBuffer;
-        public DeviceBuffer _worldBuffer;
+        public DeviceBuffer _modelBuffer;
         public DeviceBuffer _projectionBuffer;
         public DeviceBuffer _indexBuffer;
         public DeviceBuffer _vertexBuffer;
@@ -30,7 +30,7 @@ namespace MachSeven.Textures
         {
             _projectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             _viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
-            _worldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+            _modelBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
             _vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture.SizeInBytes * _vertices.Length), BufferUsage.VertexBuffer));
             graphicsDevice.UpdateBuffer(_vertexBuffer, 0, _vertices);
