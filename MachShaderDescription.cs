@@ -40,8 +40,8 @@ namespace MachSeven
 
             vertexLayout = factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
-                        new ResourceLayoutElementDescription("ViewBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)
-                        //new ResourceLayoutElementDescription("ProjectionBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)
+                        new ResourceLayoutElementDescription("ViewBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
+                        new ResourceLayoutElementDescription("ProjectionBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)
                         ));
 
             modelSet = factory.CreateResourceSet(
@@ -52,8 +52,8 @@ namespace MachSeven
             vertexSet = factory.CreateResourceSet(
                 new ResourceSetDescription(
                     vertexLayout,
-                    _viewBuffer
-                    //_projectionBuffer
+                    _viewBuffer,
+                    _projectionBuffer
                     ));
         }
     }

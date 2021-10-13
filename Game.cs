@@ -31,6 +31,8 @@ namespace MachSeven
         {
             machWindow = new MachWindow();
 
+            ModelReader mr = new ModelReader();
+
             GraphicsDeviceOptions options = new GraphicsDeviceOptions(
                 debug: false,
                 swapchainDepthFormat: PixelFormat.R16_UNorm,
@@ -88,20 +90,20 @@ namespace MachSeven
 
 
             Matrix4x4 modelMatrix = 
-                Matrix4x4.CreateTranslation(0, 0, 0)
-                * Matrix4x4.CreateRotationX(0.0f)
-                * Matrix4x4.CreateRotationY(0.0f)
+                Matrix4x4.CreateTranslation(tick, 0, -0.01f)
+                * Matrix4x4.CreateRotationX(0f)
+                * Matrix4x4.CreateRotationY(0f)
                 * Matrix4x4.CreateScale(1.0f);
 
             
             Matrix4x4 lookAtMatrix = Matrix4x4.CreateLookAt(machCamera._position,  machCamera._position - machCamera._direction, machCamera._cameraUp);
 
-            //Matrix4x4 perspectiveMatrix = Matrix4x4.CreatePerspective(machCamera._width, machCamera._height, machCamera._near, machCamera._far);
+            Matrix4x4 perspectiveMatrix = Matrix4x4.CreatePerspectiveFieldOfView(60.0f * (float)Math.PI / 180f, machCamera._width / (float)machCamera._height, machCamera._near, machCamera._far);
 
 
             _cl.UpdateBuffer(_modelBuffer, 0, ref modelMatrix);
             _cl.UpdateBuffer(_viewBuffer, 0, ref lookAtMatrix);
-           // _cl.UpdateBuffer(_projectionBuffer, 0, ref perspectiveMatrix);
+            _cl.UpdateBuffer(_projectionBuffer, 0, ref perspectiveMatrix);
             
             _cl.SetFramebuffer(_graphicsDevice.MainSwapchain.Framebuffer);
             

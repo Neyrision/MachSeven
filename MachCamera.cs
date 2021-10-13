@@ -27,7 +27,7 @@ namespace MachSeven
 
         public MachCamera(MachWindow mWindow)
         {
-            _position = new Vector3(0f, 0f, 10f);
+            _position = new Vector3(0f, -1f, 2f);
             _direction = Vector3.Normalize(_position - _target);
 
             _near = 0.1F;
